@@ -18,7 +18,9 @@ class CreateMessageTable extends Migration {
 			$table->integer('sender_id')->unsigned();
 			$table->foreign('sender_id')->references('id')->on('users');
 			$table->integer('receiver_id')->unsigned();
-			$table->foreign('receiver_id')->refernces('id')->on('users');
+			$table->foreign('receiver_id')->references('id')->on('users');
+			$table->string('is_read');
+			$table->timestamps();
 		});
 	}
 
@@ -29,7 +31,7 @@ class CreateMessageTable extends Migration {
 	 */
 	public function down()
 	{
-		Schema::drop('users');
+		Schema::drop('messages');
 	}
 
 }
