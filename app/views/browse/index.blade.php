@@ -8,6 +8,7 @@
 				<th>Username</th>
 				<th>Gender</th>
 				<th>Status</th>
+				<th>Percent Match</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -17,6 +18,7 @@
 				<td><a href="{{{action('UsersController@profile', $match->id)}}}">{{{$match->username}}}</a></td>
 				<td>{{{$match->gender}}}</td>
 				<td>{{{$match->online}}}</td>
+				<td>{{{User::percent_match($match->id)}}}</td>
 			</tr>
 			@endforeach
 		</tbody>

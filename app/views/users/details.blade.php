@@ -144,7 +144,7 @@
 				<label for="weight">Weight</label>
 				<input type="text" id="weight" name="weight">
 			</div>
-		@if($user->is_willing())
+		@if($user->is_willing($user->id))
 			<div class="form-group">
 				<label for="can_host">Can you Host?</label>
 				<label><input type="radio" name="can_host" value="yes">Yes</label>

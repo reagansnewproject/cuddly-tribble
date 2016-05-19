@@ -33,9 +33,15 @@ Route::get('/users/{id}/edit', 'UsersController@showedit');
 
 Route::post('/users/{id}/edit', 'UsersController@doedit');
 
+Route::DELETE('/users/{id}/edit', 'UsersController@destroy');
+
 Route::get('/users/{id}/images', 'UsersController@showimages');
 
 Route::post('/users/{id}/images', 'UsersController@storeimage');
+
+Route::get('/users/{id}/password', 'UsersController@editpassword');
+
+Route::post('/users/{id}/password', 'UsersController@updatepassword');
 
 Route::get('/details', 'UsersController@showdetails');
 

@@ -17,8 +17,8 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	protected $table = 'users';
 
 	public static $rules = array(
-		'username' => 'required',
-		'email' => 'required|email',
+		'username' => 'required|unique:users',
+		'email' => 'required|email|unique:users',
 		'gender' => 'required',
 		'ethnicity' => 'required',
 		'preference' => 'required',
@@ -33,6 +33,69 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		'contract' => 'required',
 	);
 
+	public static $detailrules = array(
+		'introduction' => 'required',
+		'about' => 'required',
+		'personality' => 'required',
+		'marital_status' => 'required',
+		'children' => 'required',
+		'want_children' => 'required',
+		'religion' => 'required',
+		'job' => 'required',
+		'income' => 'required',
+		'hair_color' => 'required',
+		'hair_length' => 'required',
+		'eye_color' => 'required',
+		'body_type' => 'required',
+		'height' => 'required',
+		'weight' => 'required',
+		'availability_day' => 'required',
+		'availability_time' => 'required',
+		'other_features' => 'required',
+		'ideal' => 'required',
+	);
+
+	public static $editrules = array(
+		'username' => 'required',
+		'email' => 'required|email',
+		'preference' => 'required',
+		'state' => 'required',
+		'city' => 'required',
+		'zipcode' => 'required',
+		'willing' => 'required',
+		'introduction' => 'required',
+		'about' => 'required',
+		'personality' => 'required',
+		'marital_status' => 'required',
+		'children' => 'required',
+		'want_children' => 'required',
+		'religion' => 'required',
+		'job' => 'required',
+		'income' => 'required',
+		'hair_color' => 'required',
+		'hair_length' => 'required',
+		'eye_color' => 'required',
+		'body_type' => 'required',
+		'height' => 'required',
+		'weight' => 'required',
+		'availability_day' => 'required',
+		'availability_time' => 'required',
+		'other_features' => 'required',
+		'ideal' => 'required',
+	);
+
+	public static $passwordrules = array(
+		'new_password'=> 'required|confirmed',
+	);
+
+	public function checkdetails($id) {
+		$details = DB::table('details')->where('user_id', $id)->get();
+		if($details != null) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 	public function visits() {
 		$this->hasMany('Visit');
 	}

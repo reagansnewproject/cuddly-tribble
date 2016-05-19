@@ -1,9 +1,32 @@
+body {
+	background-color: #00ccff;
+}
 li {
 	list-style-type: none;
 }
 img {
 	height: 100px;
 	width: 100px;
+}
+/*.container {
+	background-color: #0099cc;
+}*/
+.error {
+	color: red;
+}
+.navbar {
+	background-color: #0099cc;
+	padding-top: 1%;
+	color: white;
+	width: 100%;
+	padding-bottom: 1%;
+
+}
+a {
+	color: white;
+}
+.navlink {
+	color: white;
 }
 .mainpic {
 	height: 300px;
@@ -16,6 +39,42 @@ img {
 .nopic {
 	height: 100px;
 	width: 100px;
+}
+/*#landingback {
+	background-image: url(/img/couple.png);
+	background-size: 100% 100%;
+	height: 100%;
+	padding-top: 5%;
+	margin-top: -1%;
+	opacity: 0.5;
+	position: relative;
+}*/
+#landingtop {
+	background-image: url(/img/background.png);
+	background-size: 100% 100%;
+	margin-top: -5%;
+	padding-top: 5%;
+	opacity: 1;
+	/*margin-top: -2%;*/
+	/*width: 100%;
+*/}
+#landingtext {
+	color: white;
+	text-shadow: 2px 2px 2px black;
+	opacity: 1;
+	margin-top: 10%;
+	/*margin-top: -15%;*/
+}
+#landingmiddle {
+	background-color: blue;
+	/*padding-top: 3%;*/
+}
+#landingbottom {
+	background-color: yellow;
+	/*padding-top: 6%;*/
+}
+ul {
+	list-style-type: none;
 }
 /*.yes {
 	background-color: red;

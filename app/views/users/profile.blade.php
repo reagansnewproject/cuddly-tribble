@@ -21,6 +21,7 @@
 						<th>Birthday</th>
 						<th>Location</th>
 						<th>Status</th>
+						<th>Percent Match</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -43,6 +44,7 @@
 						<td>
 							{{{$user->online}}}
 						</td>
+						<td>{{{$percent}}}%</td>
 					</tr>
 				</tbody>
 				

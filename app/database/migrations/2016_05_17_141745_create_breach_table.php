@@ -18,6 +18,8 @@ class CreateBreachTable extends Migration {
 			$table->foreign('user_id')->references('id')->on('users');
 			$table->string('email');
 			$table->string('offense');
+			$table->string('ip_address');
+			$table->string('browser');
 			$table->timestamps();
 		});
 	}
