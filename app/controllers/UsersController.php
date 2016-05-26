@@ -80,6 +80,7 @@ class UsersController extends BaseController {
 	// User can only be verified if they are logged in
 		if(Auth::check()) {
 
+			User::record();
 		// User can only access the form if they are not already verified
 			if(Auth::user()->check_if_verified() == false) {
 				return View::make('users.verify');
@@ -101,6 +102,7 @@ class UsersController extends BaseController {
 
 	// User can only be verified if they are logged in
 		if(Auth::check()) {
+			User::record();
 
 		// User can only submit the form if they are not already verified
 			if(Auth::user()->check_if_verified() == false) {
@@ -149,7 +151,7 @@ class UsersController extends BaseController {
 		
 	// Redirects to the profile page and returns an error if the user is logged in already.
 		} else {
-			session::flash('errorMessage', 'You are already logged in!');
+			Session::flash('errorMessage', 'You are already logged in!');
 			return Redirect::action('UsersController@profile', Auth::id());
 		}
 	}
@@ -201,6 +203,7 @@ class UsersController extends BaseController {
 		
 	// User can only log out if they are already logged in
 		if(Auth::check()) {
+			User::record();
 			$user = Auth::user();
 			$user->online = "Offline";
 			$user->save();
@@ -220,7 +223,7 @@ class UsersController extends BaseController {
 		
 	// User can only access the page if they are logged in and verified
 		if(Auth::check() && Auth::user()->check_if_verified() == true) {
-			
+			User::record();
 		// User can only access the page if they have not already filled out their details
 			if(Auth::user()->checkdetails(Auth::id()) == false) {
 				$user = Auth::user();
@@ -244,6 +247,7 @@ class UsersController extends BaseController {
 		
 	// User can only submit the form if they are logged in and verified
 		if(Auth::check() && Auth::user()->check_if_verified() == true) {
+			User::record();
 			
 		// User can only submit the form if they have not already filled out their details
 			if(Auth::user()->checkdetails(Auth::id()) == false) {
@@ -266,6 +270,7 @@ class UsersController extends BaseController {
 					$detail->children = Input::get('children');
 					$detail->want_children = Input::get('want_children');
 					$detail->religion = Input::get('religion');
+					$detail->politics = Input::get('politics');
 					$detail->job = Input::get('job');
 					$detail->income = Input::get('income');
 					$detail->hair_color = Input::get('hair_color');
@@ -306,10 +311,12 @@ class UsersController extends BaseController {
 		
 	// User can only view profiles if they are logged in and verified (no voyeurs allowed on this site)
 		if(Auth::check() && Auth::user()->check_if_verified() == true) {
+			User::record();
 			$user = User::find($id);
 			$percent = User::percent_match($user->id);
 			$images = DB::table('images')->where('user_id', $id)->get();
-			return View::make('users.profile')->with('user', $user)->with('images', $images)->with('percent', $percent);
+			$details = DB::table('details')->where('user_id', $id)->get();
+			return View::make('users.profile')->with('user', $user)->with('images', $images)->with('percent', $percent)->with('details', $details);
 	// Redirects to the login page and returns an error if the user is not logged in or is not verified
 		} else {
 			Session::flash('errorMessage', 'You must be logged in and verified to view profiles!');
@@ -322,7 +329,7 @@ class UsersController extends BaseController {
 
 	// User must be logged in and verified
 		if(Auth::check() && Auth::user()->check_if_verified() == true) {
-
+			User::record();
 		// The user's id must match the id of the user they are trying to edit
 			if(Auth::id() == $id) {
 
@@ -342,14 +349,21 @@ class UsersController extends BaseController {
 			} else {
 				Session::flash('errorMessage', "You are not authorized to edit this user's information!");
 				$breach = new Breach();
+				$url = Request::url();
+				$request = Request::method();
+				$breach->url = $url;
+				$breach->request = $request;
 				$breach->user_id = Auth::id();
 				$breach->email = Auth::user()->email;
 				$breach->offense = "Tried to access the edit page unathorized";
 				$browser = $_SERVER["HTTP_USER_AGENT"];
 				$ip = $_SERVER["REMOTE_ADDR"];
-				$data = array('id' => $id, 'email' => $email, 'username' => $username, 'offense' => $offense, 'ip' => $ip, 'browser' => $browser);
+				$url = Request::url();
+				$request = Request::method();
+				$email = Auth::user()->email;
+				// $data = array('id' => $id, 'email' => $email, 'username' => $username, 'offense' => $offense, 'ip' => $ip, 'browser' => $browser, 'url' => $url, 'request' => $request);
 				$breach->save();
-				return Redirect::back();
+				return Redirect::action('UsersController@profile', Auth::id());
 			}
 		
 	// Redirects to the login page and returns an error if the user is not logged in
@@ -364,7 +378,7 @@ class UsersController extends BaseController {
 
 	// User must be logged in and verified to submit the form
 		if(Auth::check() && Auth::user()->check_if_verified() == true) {
-
+			User::record();
 		// User's id must match the id of the user they are trying to edit
 			if(Auth::id() == $id) {
 
@@ -418,6 +432,7 @@ class UsersController extends BaseController {
 							$edetail->children = Input::get('children');
 							$edetail->want_children = Input::get('want_children');
 							$edetail->religion = Input::get('religion');
+							$edetail->politics = Input::get('politics');
 							$edetail->job = Input::get('job');
 							$edetail->income = Input::get('income');
 							$edetail->hair_color = Input::get('hair_color');
@@ -451,6 +466,10 @@ class UsersController extends BaseController {
 			} else {
 				Session::flash('errorMessage', "You are not authorized to edit this page, and you couldn't be sending a POST request from this page without using malicious code. Your data has been logged, hacker!");
 				$breach = new Breach();
+				$url = Request::url();
+				$request = Request::method();
+				$breach->url = $url;
+				$breach->request = $request;
 				$breach->user_id = Auth::id();
 				$breach->ip_address = $_SERVER["REMOTE_ADDR"];
 				$breach->browser = $_SERVER["HTTP_USER_AGENT"];
@@ -462,7 +481,7 @@ class UsersController extends BaseController {
 				$offense = "Accessed the edit function directly unauthorized";
 				$browser = $_SERVER["HTTP_USER_AGENT"];
 				$ip = $_SERVER["REMOTE_ADDR"];
-				$data = array('id' => $id, 'email' => $email, 'username' => $username, 'offense' => $offense, 'ip' => $ip, 'browser' => $browser);
+				$data = array('id' => $id, 'email' => $email, 'username' => $username, 'offense' => $offense, 'ip' => $ip, 'browser' => $browser, 'url' => $url, 'request' => $request);
 				Mail::send('emails.breach', array('data' => $data), function($message) use ($data) {
 					$message->from('reagan@screenlight.com', 'Screenlight Dating');
 
@@ -486,7 +505,7 @@ class UsersController extends BaseController {
 
 	// User must be logged in and verified
 		if(Auth::check() && Auth::user()->check_if_verified() == true) {
-			
+			User::record();
 		// User id must match the id they are trying to reach
 			if(Auth::id() == $id) {
 				$user = Auth::user();
@@ -498,6 +517,10 @@ class UsersController extends BaseController {
 			} else {
 				Session::flash('errorMessage', 'You are not authorized to view this page');
 				$breach = new Breach();
+				$url = Request::url();
+				$request = Request::method();
+				$breach->url = $url;
+				$breach->request = $request;
 				$breach->user_id = Auth::id();
 				$breach->email = Auth::user()->email;
 				$breach->ip_address = $_SERVER["REMOTE_ADDR"];
@@ -519,7 +542,7 @@ class UsersController extends BaseController {
 
 	// User must be logged in and verified
 		if(Auth::checK() && Auth::user()->check_if_verified() == true) {
-			
+			User::record();
 		// User id must match the id they are trying to reach
 			if(Auth::id() == $id) {
 				$user = User::find($id);
@@ -553,6 +576,10 @@ class UsersController extends BaseController {
 			} else {
 				Session::flash('errorMessage', 'You are not authorized to upload an image for this user, and you could not have sent a POST request from this page unless you were using malicious code. Your information has been logged, hacker!');
 				$breach = new Breach();
+				$url = Request::url();
+				$request = Request::method();
+				$breach->url = $url;
+				$breach->request = $request;
 				$breach->user_id = Auth::id();
 				$breach->email = Auth::user()->email;
 				$breach->offense = "Accessed the image upload function directly unauthorized";
@@ -564,7 +591,7 @@ class UsersController extends BaseController {
 				$offense = "Accessed the image upload function directly unauthorized";
 				$browser = $_SERVER["HTTP_USER_AGENT"];
 				$ip = $_SERVER["REMOTE_ADDR"];
-				$data = array('id' => $id, 'email' => $email, 'username' => $username, 'offense' => $offense, 'ip' => $ip, 'browser' => $browser);
+				$data = array('id' => $id, 'email' => $email, 'username' => $username, 'offense' => $offense, 'ip' => $ip, 'browser' => $browser, 'url' => $url, 'request' => $request);
 				Mail::send('emails.breach', array('data' => $data), function($message) use ($data) {
 					$message->from('reagan@screenlight.com', 'Screenlight Dating');
 
@@ -589,7 +616,7 @@ class UsersController extends BaseController {
 
 	// User must be logged in and verified
 		if(Auth::check() && Auth::user()->check_if_verified() == true) {
-
+			User::record();
 		// User id must be correct
 			if(Auth::id() == $id) {
 				$user = Auth::user();
@@ -599,6 +626,10 @@ class UsersController extends BaseController {
 			} else {
 				$breach = new Breach();
 				$breach->user_id = Auth::id();
+				$url = Request::url();
+				$request = Request::method();
+				$breach->url = $url;
+				$breach->request = $request;
 				$breach->email = Auth::user()->email;
 				$breach->offense = "Attempted to access another user's edit password page";
 				$breach->ip_address = $_SERVER["REMOTE_ADDR"];
@@ -609,7 +640,7 @@ class UsersController extends BaseController {
 				$offense = "Attempted to access another user's edit password page";
 				$browser = $_SERVER["HTTP_USER_AGENT"];
 				$ip = $_SERVER["REMOTE_ADDR"];
-				$data = array('id' => $id, 'email' => $email, 'username' => $username, 'offense' => $offense, 'ip' => $ip, 'browser' => $browser);
+				$data = array('id' => $id, 'email' => $email, 'username' => $username, 'offense' => $offense, 'ip' => $ip, 'browser' => $browser, 'url' => $url, 'request' => $request);
 				Mail::send('emails.breach', array('data' => $data), function($message) use ($data) {
 					$message->from('reagan@screenlight.com', 'Screenlight Dating');
 
@@ -634,7 +665,7 @@ class UsersController extends BaseController {
 
 	// User must be logged in and verified
 		if(Auth::check() && Auth::user()->check_if_verified() == true) {
-
+			User::record();
 		// User id must be correct
 			if(Auth::id() == $id) {
 				$validator = Validator::make(Input::all(), User::$passwordrules);
@@ -657,6 +688,10 @@ class UsersController extends BaseController {
 		// If User id doesn't match and a POST request is sent from here, it is a hacking attempt, and I am notified, and an error is returned. 
 			} else {
 				$breach = new Breach();
+				$url = Request::url();
+				$request = Request::method();
+				$breach->url = $url;
+				$breach->request = $request;
 				$breach->user_id = Auth::id();
 				$breach->email = Auth::user()->email;
 				$breach->offense = "Sent a direct post request on the password update form while unauthorized";
@@ -668,7 +703,7 @@ class UsersController extends BaseController {
 				$offense = "Sent a direct post request on the password update form while unauthorized";
 				$browser = $_SERVER["HTTP_USER_AGENT"];
 				$ip = $_SERVER["REMOTE_ADDR"];
-				$data = array('id' => $id, 'email' => $email, 'username' => $username, 'offense' => $offense, 'ip' => $ip, 'browser' => $browser);
+				$data = array('id' => $id, 'email' => $email, 'username' => $username, 'offense' => $offense, 'ip' => $ip, 'browser' => $browser, 'url' => $url, 'request' => $request);
 				Mail::send('emails.breach', array('data' => $data), function($message) use ($data) {
 					$message->from('reagan@screenlight.com', 'Screenlight Dating');
 
@@ -693,7 +728,7 @@ class UsersController extends BaseController {
 
 	// User must be logged in and verified
 		if(Auth::check() && Auth::user()->check_if_verified() == true) {
-			
+			User::record();
 		// User id must be correct
 			if(Auth::id() == $id) {
 				$user = User::find($id);
@@ -822,6 +857,10 @@ class UsersController extends BaseController {
 		// If user id is incorrect, it is a very serious hacking attempt. Notifies me of a security breach and returns an error
 			} else {
 				$breach = new Breach();
+				$url = Request::url();
+				$request = Request::method();
+				$breach->url = $url;
+				$breach->request = $request;
 				$breach->user_id = Auth::id();
 				$breach->email = Auth::user()->email;
 				$breach->offense = "Sent a direct delete request from an unauthorized page";
@@ -833,7 +872,7 @@ class UsersController extends BaseController {
 				$offense = "Sent a direct delete request from an unauthorized page";
 				$browser = $_SERVER["HTTP_USER_AGENT"];
 				$ip = $_SERVER["REMOTE_ADDR"];
-				$data = array('id' => $id, 'email' => $email, 'username' => $username, 'offense' => $offense, 'ip' => $ip, 'browser' => $browser);
+				$data = array('id' => $id, 'email' => $email, 'username' => $username, 'offense' => $offense, 'ip' => $ip, 'browser' => $browser, 'url' => $url, 'request' => $request);
 				Mail::send('emails.breach', array('data' => $data), function($message) use ($data) {
 					$message->from('reagan@screenlight.com', 'Screenlight Dating');
 

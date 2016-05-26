@@ -1,6 +1,6 @@
 <?php
-class Breach extends Eloquent {
-	protected $table = "breaches";
+class Activity extends Eloquent {
+	protected $table = 'activities';
 
 	public function user() {
 		$this->belongsTo('User');

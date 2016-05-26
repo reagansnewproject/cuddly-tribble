@@ -67,7 +67,13 @@ Route::get('/inbox/{message_id}/{person_id}', 'MessageController@showmessage');
 
 Route::post('/inbox/{message_id}/{person_id}', 'MessageController@reply');
 
+Route::get('/users/{id}/icebreaker', 'MessageController@setupicebreaker');
 
+Route::post('/users/{id}/icebreaker', 'MessageController@sendicebreaker');
+\
+Route::get('/icebreakers/{id}', 'MessageController@showicebreaker');
+
+Route::post('/icebreakers/{id}', 'MessageController@replyicebreaker');
 
 
 

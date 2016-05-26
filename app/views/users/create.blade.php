@@ -1,13 +1,14 @@
 @extends('layouts.master')
 @section('content')
 <div class="container">
-	<div class="col-lg-8 col-lg-offset-3">
+	<div class="col-lg-8 col-lg-offset-1 col-md-8 col-md-offset-1 col-sm-8 col-sm-offset-1 col-xs-8 col-xs-offset-2">
 		<form class="form-horizontal" action="{{{action('UsersController@store')}}}" method="POST">
 			<div class="form-group">
 				@if($errors->has('username'))
 					{{{$errors->first('username')}}}
 				@endif
 				<label for="username">Username</label>
+				<br>
 				<input type="text" name="username" id="username">
 			</div>
 			<div class="form-group">
@@ -15,6 +16,7 @@
 					{{{$errors->first('email')}}}
 				@endif
 				<label for="email">Email</label>
+				<br>
 				<input type="text" name="email" id="email">
 			</div>
 			<div class="form-group">
@@ -22,6 +24,7 @@
 					{{{$errors->first('gender')}}}
 				@endif
 				<label for="gender">Which gender do you most strongly identify as?</label>
+				<br>
 				<label><input type="radio" name="gender" value="Male">Male</label>
 				<label><input type="radio" name="gender" value="Female">Female</label>
 			</div>
@@ -30,6 +33,7 @@
 					{{{$errors->first('ethnicity')}}}
 				@endif
 				<label for="ethnicity">Ethnicity</label>
+				<br>
 				<label><input type="radio" name="ethnicity" value="Caucasian">Caucasian</label>
 				<label><input type="radio" name="ethnicity"value="Black">African American</label>
 				<label><input type="radio" name="ethnicity"value="Hispanic">Hispanic</label> 
@@ -42,6 +46,7 @@
 					{{{$errors->first('preference')}}}
 				@endif
 				<label for="preference">I am looking for someone who is: </label>
+				<br>
 				<label><input type="radio" name="preference" id="preference1" value="Female">Female</label>
 				<label><input type="radio" name="preference" id="preference2" value="Male">Male</label>
 				<label><input type="radio" name="preference" id="preference3" value="All">Either Male or Female</label>
@@ -57,6 +62,7 @@
 					{{{$errors->first('year')}}}
 				@endif
 				<label for="birthday">Birthday</label>
+				<br>
 				<select name="month">
 					<option disabled> - Month - </option>
 					<option value="January">January</option>
@@ -170,6 +176,7 @@
 					{{{$errors->first('state')}}}
 				@endif
 				<label for="state">State</label>
+				<br>
 				<select name="state">
 					<option disabled> - State - </option>
 					<option value="AL">AL</option>
@@ -229,6 +236,7 @@
 					{{{$errors->first('city')}}}
 				@endif
 				<label for="city">City</label>
+				<br>
 				<input type="text" name="city" id="city">
 			</div>
 			<div class="form-group">
@@ -236,10 +244,12 @@
 					{{{$errors->first('zipcode')}}}
 				@endif
 				<label for="zipcode">Zip</label>
+				<br>
 				<input type="number" name="zipcode" id="zipcode">
 			</div>
 			<div class="form-group">
 				<label for="willing">Are you looking to Hookup?</label>
+				<br>
 				<label><input type="radio" name="willing" value="Yes">Yes</label>
 				<label><input type="radio" name="willing" value="No">No</label>
 			</div>
@@ -248,10 +258,12 @@
 					{{{$errors->first('password')}}}
 				@endif
 				<label for="password">Password</label>
+				<br>
 				<input type="password" name="password" id="password">
 			</div>
 			<div class="form-group">
 				<label for="password_confirmation">Confirm Password</label>
+				<br>
 				<input type="password" name="password_confirmation" id="password_confirmation">
 			</div>
 			<h3>Important!</h3>

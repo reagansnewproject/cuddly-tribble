@@ -1,9 +1,9 @@
 @extends('layouts.master')
 @section('content')
 <div class="row">
-	<div class="col-lg-12">
+	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 		<h3 class="text-center">Received Messages</h3>
-		<div class="col-lg-6 col-lg-offset-3">
+		<div class="col-lg-10 col-lg-offset-1 col-md-10 col-md-offset-1 col-sm-10 col-sm-offset-1 col-xs-10">
 		<table class="table table-striped">
 			<thead>
 				<tr>
@@ -43,6 +43,15 @@
 						</tr>
 					@endforeach
 				@endif
+				@foreach($receivedicebreakers as $ice)
+					<tr>
+						<td>{{{User::find($ice->sender_id)->username}}}</td>
+						<td>
+							<a href="{{{action('MessageController@showicebreaker', $ice->id)}}}">New Icebreaker</a>
+						</td>
+						<td>Received</td>
+					</tr>
+				@endforeach
 			</tbody>
 		</table>
 		</div>
@@ -51,7 +60,7 @@
 <div class="row">
 	<div class="col-lg-12">
 		<h3 class="text-center">Sent Messages</h3>
-		<div class="col-lg-6 col-lg-offset-3">
+		<div class="col-lg-10 col-lg-offset-1 col-md-10 col-md-offset-1 col-sm-10 col-sm-offset-1 col-xs-10">
 			<table class="table table-striped">
 				<thead>
 					<tr>
@@ -91,6 +100,13 @@
 						</tr>
 					@endforeach
 				@endif
+				@foreach($senticebreakers as $ice)
+					<tr>
+						<td>{{{User::find($ice->receiver_id)->username}}}</td>
+						<td>New Icebreaker</td>
+						<td>Sent</td>
+					</tr>
+				@endforeach
 				</tbody>
 			</table>
 		</div>

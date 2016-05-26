@@ -11,6 +11,11 @@ img {
 /*.container {
 	background-color: #0099cc;
 }*/
+.profilelist {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}
 .error {
 	color: red;
 }

@@ -1,13 +1,17 @@
 @extends('layouts.master')
 @section('content')
-	<h3 class="text-center">What do you think of {{{$match->username}}}?</h3>
-	<img src="../../{{{$user->image_url}}}">
 	<div class="row">
-		<div class="col-lg-12 text-center">
-			<div class="yes col-lg-3 col-lg-offset-3 col-md-3 col-md-offset-3 col-sm-3 col-sm-offset-3 col-xs-3 col-xs-offset-2" data-name="yes">
+		<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 text-center">
+			<h3 class="text-center">What do you think of {{{$match->username}}}?</h3>
+			<img src="../../{{{$user->image_url}}}">
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 text-center">
+			<div class="yes col-lg-3 col-lg-offset-3 col-md-3 col-md-offset-3 col-sm-3 col-sm-offset-3 col-xs-4 col-xs-offset-2" data-name="yes">
 				<img class="yespic" src="/img/yes.png">
 			</div>
-			<div class="no col-lg-3 col-md-3 col-sm-3 col-xs-3s" data-name="no">
+			<div class="no col-lg-3 col-md-3 col-sm-3 col-xs-4" data-name="no">
 				<img class="nopic" src="/img/no.png">
 			</div>
 		</div>

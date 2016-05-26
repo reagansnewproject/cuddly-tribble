@@ -3,6 +3,7 @@ class BrowseController extends BaseController {
 
 	public function index() {
 		if(Auth::check() && Auth::user()->check_if_verified() == true) {
+			User::record();
 			$matches = Auth::user()->allmatches();
 			// $matches = DB::table('users')->where('willing', Auth::user()->willing)->where('gender', Auth::user()->preference);
 			return View::make('browse.index')->with('matches', $matches);
@@ -13,6 +14,7 @@ class BrowseController extends BaseController {
 	}
 	public function closest() {
 		if(Auth::check() && Auth::user()->check_if_verified() == true) {
+			User::record();
 			$matches = DB::table('users')->where('willing', Auth::user()->willing)->where('gender', Auth::user()->preference)->where('city', Auth::user()->city)->where('state', Auth::user()->state)->get();
 			return View::make('browse.closest')->with('matches', $matches);
 		} else {
@@ -23,6 +25,7 @@ class BrowseController extends BaseController {
 
 	public function determinevote() {
 		if(Auth::check() && Auth::user()->check_if_verified() == true) {
+			User::record();
 			$user = Auth::user();
 			$matches = $user->unvotedmatches();
 			$random = floor(rand(0, (count($matches)-1)));
@@ -41,6 +44,7 @@ class BrowseController extends BaseController {
 
 	public function showvote($id) {
 		if(Auth::check() && Auth::user()->check_if_verified() == true) {
+			User::record();
 			$user = Auth::user();
 			$match = User::find($id);
 			// $image = DB::table('images')->where('user_id', $match->id)->where('is_main', 'Yes')->get();
@@ -54,7 +58,7 @@ class BrowseController extends BaseController {
 
 	public function storevote($id) {
 		if(Auth::check() && Auth::user()->check_if_verified() == true) {
-
+			User::record();
 			$user = Auth::user();
 			$match = User::find($id);
 			$vote = new Vote();

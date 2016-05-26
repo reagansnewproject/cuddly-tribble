@@ -16,6 +16,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	 */
 	protected $table = 'users';
 
+// Rules to be used upon creation of a new user
 	public static $rules = array(
 		'username' => 'required|unique:users',
 		'email' => 'required|email|unique:users',
@@ -33,6 +34,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		'contract' => 'required',
 	);
 
+// Rules to be used as a user fills in their details
 	public static $detailrules = array(
 		'introduction' => 'required',
 		'about' => 'required',
@@ -41,6 +43,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		'children' => 'required',
 		'want_children' => 'required',
 		'religion' => 'required',
+		'politics' => 'required',
 		'job' => 'required',
 		'income' => 'required',
 		'hair_color' => 'required',
@@ -55,6 +58,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		'ideal' => 'required',
 	);
 
+// Rules to be used when a user edits their information
 	public static $editrules = array(
 		'username' => 'required',
 		'email' => 'required|email',
@@ -70,6 +74,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		'children' => 'required',
 		'want_children' => 'required',
 		'religion' => 'required',
+		'politics' => 'required',
 		'job' => 'required',
 		'income' => 'required',
 		'hair_color' => 'required',
@@ -84,10 +89,12 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		'ideal' => 'required',
 	);
 
+// Rules to be used when the user edits their password
 	public static $passwordrules = array(
 		'new_password'=> 'required|confirmed',
 	);
 
+// Checks the database to see if the user has already filled in their details. If they've filled them in, returns true. If not, returns false.
 	public function checkdetails($id) {
 		$details = DB::table('details')->where('user_id', $id)->get();
 		if($details != null) {
@@ -95,6 +102,14 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		} else {
 			return false;
 		}
+	}
+
+	public function activities() {
+		$this->hasMany('Activity');
+	}
+
+	public function breaches() {
+		$this->hasManyy('Breach');
 	}
 	public function visits() {
 		$this->hasMany('Visit');
@@ -112,6 +127,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		$this->belongsTo('Detail');
 	}
 
+// Checks to see if the user checked "yes" or "no" on the "willing" field.
 	public static function is_willing($id) {
 		$user = User::find($id);
 		if($user->willing == "Yes") {
@@ -121,6 +137,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		}
 	}
 
+// Checks to see if the user is verified
 	public static function check_if_verified() {
 		$user = Auth::user();
 		if($user->is_verified == "Yes") {
@@ -130,9 +147,21 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		}
 	}
 
+// Creates a record of the user's activity upon each page load.
+	public static function record() {
+		$user = Auth::user();
+		$record = new Activity();
+		$record->user_id = $user->id;
+		$record->url = Request::url();
+		$record->request = Request::method();
+		$record->save();
+	}
+
+// Checks the amount of messages and replies in the database for the user and returns the total count
 	public static function messagecount() {
 		$messages = DB::table('messages')->where('receiver_id', Auth::id())->where('is_read', "No")->get();
 		$replies = DB::table('replies')->where('receiver_id', Auth::id())->where('is_read', "No")->get();
+		$icebreakers = DB::table('icebreakers')->where('receiver_id', Auth::id())->where('question1_answer', NULL)->get();
 		$total = [];
 
 		if($messages != null) {
@@ -146,6 +175,11 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 			}
 		}
 
+		if($icebreakers != null) {
+			foreach($icebreakers as $ice) {
+				array_push($total, 1);
+			}
+		}
 		return count($total);
 
 		// if($messages == null) {
@@ -159,6 +193,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		// }
 	}
 
+// Returns every match that meets the most basic preferences of the user
 	public static function allmatches() {
 		$user = Auth::user();
 		if($user->preference != "All") {
@@ -169,12 +204,8 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		return $matches;
 	}
 
+// Returns only matches that both meet the most basic preferences of the user and are located in the same area. 
 	public static function localmatches() {
-		// if(Auth::user()->preference == "Women") {
-		// 	Auth::user()->preference = "Female";
-		// } else {
-		// 	Auth::user()->preference = "Male";
-		// }
 		$user = Auth::user();
 		if($user->preference != "All") {
 			$matches = DB::table('users')->where('willing', Auth::user()->willing)->where('gender', Auth::user()->preference)->where('preference', Auth::user()->gender)->where('state', Auth::user()->state)->get();
@@ -184,6 +215,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		return $matches;
 	}
 
+// Returns an array of matches who the user has not voted on yet.
 	public static function unvotedmatches() {
 		$available = [];
 		$user = Auth::user();
@@ -201,6 +233,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		return $available;
 	}
 
+// Compares the details the user filled out with the details the other user filled out. Returns a percentage based on how many things they have in common.
 	public static function percent_match($id) {
 		$things_in_common = [];
 		$driver = Auth::user();
@@ -244,7 +277,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 				if($detail->religion == $subdetail->religion) {
 					array_push($things_in_common, 1);
 				}
-				if($detail->job == $subdetail->job) {
+				if($detail->politics == $subdetail->politics) {
 					array_push($things_in_common, 1);
 				}
 				if($detail->income == $subdetail->income) {

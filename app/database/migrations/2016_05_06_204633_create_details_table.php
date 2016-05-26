@@ -23,6 +23,7 @@ class CreateDetailsTable extends Migration {
 			$table->string('children');
 			$table->string('want_children');
 			$table->string('religion');
+			$table->string('politics');
 			$table->string('job');
 			$table->string('income');
 			$table->string('hair_color');
