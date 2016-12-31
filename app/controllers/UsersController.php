@@ -541,7 +541,7 @@ class UsersController extends BaseController {
 	public function storeimage($id) {
 
 	// User must be logged in and verified
-		if(Auth::checK() && Auth::user()->check_if_verified() == true) {
+		if(Auth::check() && Auth::user()->check_if_verified() == true) {
 			User::record();
 		// User id must match the id they are trying to reach
 			if(Auth::id() == $id) {
